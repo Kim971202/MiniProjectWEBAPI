@@ -58,7 +58,12 @@ router.get("/getOrgWorkersList", async (req, res, next) => {
 
   //http://localhost:3000/org/getOrgWorkers?serviceKey=26689323
   try {
-    const sql = `SELECT * FROM t_user a INNER JOIN t_organization_code b
+    const sql = `SELECT a.user_id AS userID, 
+                        a.user_name AS userName, 
+                        a.org_code AS orgCode,
+                        a.tel_no AS telNum,
+                        DATE_FORMAT(a.user_insert_time, '%Y%m%d%h%i%s') AS '최근수정일'  
+                 FROM t_user a INNER JOIN t_organization_code b
                  WHERE a.org_code = b.org_code limit 5;`;
 
     const data = await pool.query(sql);
@@ -118,5 +123,64 @@ router.post("/postOrg", async (req, res, next) => {
     return res.status(500).json(err);
   }
 });
+
+router.put("/putOrgName", async (req, res, next) => {
+  let { orgName = "", orgCode = 0 } = req.body;
+  console.log(orgName, orgCode);
+
+  let resulCode = "00";
+
+  if (orgName === "") resulCode = "10";
+
+  if (orgCode === "") resulCode = "10";
+
+  if (resulCode !== "00") {
+    return res.json({ resultCode: "01", resultMsg: "에러" });
+  }
+
+  try {
+    let sql = "UPDATE t_organization_code SET org_name = ? WHERE org_code = ?;";
+    console.log("sql=>" + sql);
+    const data = await pool.query(sql, [orgName, orgCode]);
+    console.log("data[0]=>" + data[0]);
+    let resultList = data[0];
+    let jsonResult = {
+      resultList,
+    };
+
+    return res.json(jsonResult);
+  } catch (err) {
+    console.log("ERROR===============" + err);
+    return res.status(500).json(err);
+  }
+});
+
+// router.delete("/deleteOrg", async (req, res, next) => {
+//   let { orgCode = 0, orgName = "" } = req.body;
+//   console.log(orgCode, orgName);
+
+//   let resulCode = "00";
+
+//   if (orgCode === "") resulCode = "10";
+
+//   if (orgName === "") resulCode = "10";
+
+//   if (resulCode !== "00") {
+//     return res.json({ resultCode: "01", resultMsg: "에러" });
+//   }
+
+//   try {
+//     let sql = "DELETE FROM t_organization_code WHERE org_code = ?";
+//     const data = await pool.query(sql, [userID]);
+//     console.log("data[0]=>" + data[0]);
+
+//     let jsonResult = {
+//       resulCode: resulCode,
+//     };
+//     return res.json(jsonResult);
+//   } catch (err) {
+//     return res.status(500).json(err);
+//   }
+// });
 
 module.exports = router;

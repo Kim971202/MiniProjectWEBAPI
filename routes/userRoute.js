@@ -11,13 +11,18 @@ router.get("/getUserList", async (req, res, next) => {
 
   //http://localhost:3000/user/getUserList?serviceKey=26689323
   try {
-    const sql = `SELECT * FROM t_user;`;
+    const sql = `SELECT user_id AS userID, 
+                        org_code AS orgCode, 
+                        user_name AS userName, 
+                        tel_no AS telNum, 
+                        DATE_FORMAT(user_insert_time, '%Y%m%d%h%i%s') AS '최근수정일' 
+                 FROM t_user;`;
 
     const data = await pool.query(sql);
     const resultList = data[0];
 
     let jsonResult = {
-      resultList,
+      items: resultList,
     };
     return res.json(jsonResult);
   } catch (error) {
@@ -35,7 +40,13 @@ router.get("/getUserDetail", async (req, res, next) => {
 
   //http://localhost:3000/user/getUserDetail?serviceKey=26689323&userID=10
   try {
-    const sql = `SELECT * FROM t_user WHERE user_id = ?;`;
+    const sql = `SELECT user_id AS userID, 
+                        org_code AS orgCode, 
+                        user_name AS userName, 
+                        tel_no AS telNum,
+                        DATE_FORMAT(user_insert_time, '%Y%m%d%h%i%s') AS '최근수정일'
+                FROM t_user 
+                WHERE user_id = ?;`;
 
     const data = await pool.query(sql, [userID]);
     const resultList = data[0];
