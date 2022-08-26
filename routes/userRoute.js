@@ -2,28 +2,28 @@ var express = require("express");
 var router = express.Router();
 const pool = require("../database/pool");
 
-// router.get("/getUserList", async (req, res, next) => {
-//   let {
-//     serviceKey = "00000000", // 서비스 인증키
-//   } = req.query;
+router.get("/getUserList", async (req, res, next) => {
+  let {
+    serviceKey = "00000000", // 서비스 인증키
+  } = req.query;
 
-//   console.log(serviceKey);
+  console.log(serviceKey);
 
-//   //http://localhost:3000/user/getUserList?serviceKey=26689323
-//   try {
-//     const sql = `SELECT * FROM t_user;`;
+  //http://localhost:3000/user/getUserList?serviceKey=26689323
+  try {
+    const sql = `SELECT * FROM t_user;`;
 
-//     const data = await pool.query(sql);
-//     const resultList = data[0];
+    const data = await pool.query(sql);
+    const resultList = data[0];
 
-//     let jsonResult = {
-//       resultList,
-//     };
-//     return res.json(jsonResult);
-//   } catch (error) {
-//     return res.status(500).json(err);
-//   }
-// });
+    let jsonResult = {
+      resultList,
+    };
+    return res.json(jsonResult);
+  } catch (error) {
+    return res.status(500).json(err);
+  }
+});
 
 router.get("/getUserDetail", async (req, res, next) => {
   let {
@@ -155,33 +155,6 @@ router.delete("/deleteUser", async (req, res, next) => {
     };
     return res.json(jsonResult);
   } catch (err) {
-    return res.status(500).json(err);
-  }
-});
-
-router.get("/getUserList", async (req, res, next) => {
-  let {
-    serviceKey = "00000000",
-    userID = 0, // 서비스 인증키
-  } = req.query;
-
-  console.log(serviceKey, userID);
-
-  //http://localhost:3000/user/getUserList?serviceKey=26689323&userID=10
-
-  //http://localhost:3000/user/getUserDetail?serviceKey=26689323&userID=10
-
-  try {
-    const sql = `SELECT * FROM t_user where user_id = ?;`; //sql 구문
-    const data = await pool.query(sql, [userID]);
-    console.log(userID);
-    const resultList = data[0];
-    console.log(resultList);
-    let jsonResult = {
-      resultList,
-    };
-    return res.json(jsonResult);
-  } catch (error) {
     return res.status(500).json(err);
   }
 });
