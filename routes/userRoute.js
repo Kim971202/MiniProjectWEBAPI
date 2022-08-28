@@ -2,21 +2,24 @@ var express = require("express");
 var router = express.Router();
 const pool = require("../database/pool");
 
-router.get("/getUserList", async (req, res, next) => {
+router.post("/getUserList", async (req, res, next) => {
   let {
-    serviceKey = "00000000", // 서비스 인증키
+    userName = "",
+    genderFlag = "",
+    telNum = "",
   } = req.query;
 
   console.log(serviceKey);
 
-  //http://localhost:3000/user/getUserList?serviceKey=26689323
+  //http://localhost:3000/user/postUserList
   try {
     const sql = `SELECT user_id AS userID, 
                         org_code AS orgCode, 
                         user_name AS userName, 
                         tel_no AS telNum, 
-                        DATE_FORMAT(user_insert_time, '%Y%m%d%h%i%s') AS '최근수정일' 
-                 FROM t_user;`;
+                        DATE_FORMAT(user_insert_time, '%Y%m%d%h%i%s') AS 'UpdateDate' 
+                 FROM t_user
+                 WHERE userName = ? OR gender_flag = ? OR tel_no = ?;`;
 
     const data = await pool.query(sql);
     const resultList = data[0];

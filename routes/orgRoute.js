@@ -155,32 +155,30 @@ router.put("/putOrgName", async (req, res, next) => {
   }
 });
 
-// router.delete("/deleteOrg", async (req, res, next) => {
-//   let { orgCode = 0, orgName = "" } = req.body;
-//   console.log(orgCode, orgName);
+router.delete("/deleteOrg", async (req, res, next) => {
+  let { orgCode = 0} = req.body;
+  console.log(orgCode);
 
-//   let resulCode = "00";
+  let resulCode = "00";
 
-//   if (orgCode === "") resulCode = "10";
+  if (orgCode === "") resulCode = "10";
 
-//   if (orgName === "") resulCode = "10";
+  if (resulCode !== "00") {
+    return res.json({ resultCode: "01", resultMsg: "에러" });
+  }
 
-//   if (resulCode !== "00") {
-//     return res.json({ resultCode: "01", resultMsg: "에러" });
-//   }
+  try {
+    let sql = "DELETE FROM t_organization_code WHERE org_code = ?";
+    const data = await pool.query(sql, [orgCode]);
+    console.log("data[0]=>" + data[0]);
 
-//   try {
-//     let sql = "DELETE FROM t_organization_code WHERE org_code = ?";
-//     const data = await pool.query(sql, [userID]);
-//     console.log("data[0]=>" + data[0]);
-
-//     let jsonResult = {
-//       resulCode: resulCode,
-//     };
-//     return res.json(jsonResult);
-//   } catch (err) {
-//     return res.status(500).json(err);
-//   }
-// });
+    let jsonResult = {
+      resulCode,
+    };
+    return res.json(jsonResult);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+});
 
 module.exports = router;
